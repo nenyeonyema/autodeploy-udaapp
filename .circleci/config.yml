@@ -113,13 +113,13 @@ jobs:
       - restore_cache:
           keys: [frontend-scan]
       - run:
-          name: Scan frontend
+          name: Scan Frontend
           command: |
             # Your code here
             cd backend
             cd frontend
             npm install
-           npm audit --audit-level=critical
+            npm audit --audit-level=critical
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-scan
@@ -133,7 +133,7 @@ jobs:
       - restore_cache:
           keys: [backend-scan]
       - run:
-          name: Scan backend
+          name: Scan Backend
           command: |
             # Your code here
             cd backend
