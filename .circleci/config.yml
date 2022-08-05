@@ -264,13 +264,13 @@ jobs:
 
 #   deploy-frontend:
 #     docker:
-#       # Docker image here that supports AWS CLI
-#     steps:
-#       # Checkout code from git
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             # your code here
+#         - image: cimg/base:stable
+    # steps:
+    #   - checkout
+    #   - add_ssh_keys:
+    #       fingerprints:
+    #         - 'd7:db:04:d7:51:3b:06:a5:05:53:1f:98:49:6c:5d:30'
+#       
 #       - run:
 #           name: Get backend url
 #           command: |
