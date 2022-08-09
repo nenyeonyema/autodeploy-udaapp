@@ -421,18 +421,20 @@ jobs:
           name: Update cloudfront distribution
           command: |
             export OLD_WORKFLOW_ID=$(aws cloudformation list-exports \
-              --query "Exports[?Name==\`WorkflowID\`].Value" \
-              --no-paginate --output text)
-              
+                     --query "Exports[?Name==\`WorkflowID\`].Value" \
+                     --no-paginate --output text)
             curl https://kvdb.io/LrxjV67wq6nQut5uPBD3ue/$old_workflow_id -d "${OLD_WORKFLOW_ID}"  
+      
 
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
               --stack-name InitialStack \
-              --parameter-overrides WorkflowID=${CIRCLE_WORKFLOW_ID:0:7} \
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --tags project=udapeople
+
             echo OldWorkflowID: "${OLD_WORKFLOW_ID}"
-            echo CurrentWorkflowID:${CIRCLE_WORKFLOW_ID:0:7}"
+            echo CurrentWorkflowID: "${CIRCLE_WORKFLOW_ID:0:7}"
+            
               
       - destroy-environment
       - revert-migrations 
@@ -448,13 +450,11 @@ jobs:
           name: Get old stack workflow id
           command: |
             # your code here
-            export STACKS=$(aws cloudformation list-stacks \ 
+            export STACKS=($(aws cloudformation list-stacks \ 
               --query "StackSummaries[*].StackName" \
-              --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
-            
+              --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
             echo Stack names: "${STACKS[@]}"
-            export OldWorkflowID=$(curl --insecure https://kvdb.io/99gz9vZAkLeoEA59yk85NG/old_workflow_id)
-            
+            export OldWorkflowID=$(curl --insecure https://kvdb.io/LrxjV67wq6nQut5uPBD3ue/old_workflow_id)
             echo OldWorkflowID: "${OldWorkflowID}"
       - run:
           name: Remove old stacks and files
