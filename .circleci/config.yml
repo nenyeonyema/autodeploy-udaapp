@@ -431,7 +431,7 @@ jobs:
           command: |          
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
-              --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --stack-name InitialStack 
               
       - destroy-environment
@@ -448,23 +448,24 @@ jobs:
           name: Get old stack workflow id
           command: |
             # your code here
-            export OLD_WORKFLOW_ID=$(aws cloudformation \
-                 list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-                 --no-paginate --output text)
-            echo Old Workflow ID: "${OLD_WORKFLOW_ID}"
+            export OldWorkflowID=$(aws cloudformation \
+                list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+                --no-paginate --output text)
+            echo Old Workflow ID: "${OldWorkflowID}"
             echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
-            export STACKS=($(aws cloudformation  \ 
-                list-exports --query "StackSummaries[*].StackName" \
-                --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
-            echo Stack names: "${STACKS[@]}"
+            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+                --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+            echo Stack names: "${STACKS[@]}"   
       - run:
           name: Remove old stacks and files
           command: |
-            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" =~ "${OldWorkflowID}" ]]
             then
               aws s3 rm s3://udapeople-$($OldWorkflowID) --recursive
               aws cloudformation delete-stack --stack-name udapeople-backend-$(OldWorkflowID)
               aws cloudformation delete-stack --stack-name udapeople-frontend-$(OldWorkflowID)
+            else
+              echo "$OldWorkflowID==$CIRCLE_WORKFLOW_ID:0:7 => nothing needs to be done..."
             fi
 
 workflows:
