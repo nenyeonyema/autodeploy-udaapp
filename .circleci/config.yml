@@ -447,10 +447,7 @@ jobs:
       - checkout
       - install_awscli
       - install_nodejs
-      - run:
-          name: Install dependencies
-          command: |
-            yum install -y tar gzip curl
+      
       - run:
           name: Get old stack workflow id
           command: |
