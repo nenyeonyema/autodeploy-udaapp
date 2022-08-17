@@ -43,11 +43,11 @@ commands:
           when: on_fail
           command: |
             # Your code here
-            aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            aws s3 rm "s3://udapeople-<<parameters.workflow_id >>" --recursive
             # Delete frontend stack
-            aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
+            aws cloudformation delete-stack --stack-name "udapeople-frontend-<<parameters.workflow_id >>"
             # Delete backend stack
-            aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+            aws cloudformation delete-stack --stack-name "udapeople-backend-<<parameters.workflow_id >>"
 
 
   revert-migrations:
@@ -452,15 +452,15 @@ jobs:
           name: Get old stack workflow id
           command: |
             # your code here
-            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-                --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
-            echo Stack names: "${STACKS[@]}"   
-
             export OldWorkflowID=$(curl --insecure https://kvdb.io/LrxjV67wq6nQut5uPBD3ue/old_workflow_id)
             echo Old Workflow ID: "${OldWorkflowID}"
             echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
 
-            if [[ "${OldWorkflowID}" =~ "${STACKS[@]}"  ]]
+            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+                --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+            echo Stack names: "${STACKS[@]}"   
+
+            if [[ "${OldWorkflowID}" =~ "${STACKS[@]}" ]]
             then
               aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
