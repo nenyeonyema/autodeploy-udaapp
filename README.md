@@ -59,3 +59,6 @@ Before you submit your project, please check your work against the project rubri
 ### License
 
 [License](LICENSE.md)
+
+
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/nenyeonyema/autodeploy-udaapp/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/nenyeonyema/autodeploy-udaapp/tree/master)
